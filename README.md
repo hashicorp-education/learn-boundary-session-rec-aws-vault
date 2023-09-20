@@ -55,6 +55,7 @@ You will need your `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 - `force-apply`: This will taint the aws_instance resource to recreate and
   refresh vault.
 - `destroy`: This will destroy the aws resources defined in the infra folder.
+- `terraform_output`: This will print the outputs from `make apply`.
 - `vault_connect`: This will allow you to conenct to the vault instance via ssh.
 - `vault_token`: This will fetch the root token from the vault service and the
   public address of the aws_instance.
@@ -106,8 +107,7 @@ To deploy the lab environment:
    View the outputs any time:
 
    ```shell
-   cd infra/ ;
-   terraform output
+   make terraform_output
    ```
 
 When you are done:
