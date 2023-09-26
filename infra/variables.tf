@@ -19,33 +19,38 @@ variable "boundary_cluster_id" {
     }
 }
 
+resource "random_id" "workspace_id" {
+  prefix      = "${terraform.workspace}"
+  byte_length = 1
+}
+
 locals {
     deployment_name = split(":", data.aws_caller_identity.current.user_id)[1]
     vault_tags = {
         Name      = "boundary-vault"
         env       = "vault-dev"
-        workspace = terraform.workspace
+        workspace = random_id.workspace_id.id
     }
     host_catalog_plugin_tags = [{
         Name  = "boundary-host-1"
         env       = "dev"
-        workspace = terraform.workspace
+        workspace = random_id.workspace_id.id
     }, {
         Name  = "boundary-host-2"
         env       = "prod"
-        workspace = terraform.workspace
+        workspace = random_id.workspace_id.id
     }, {
         Name  = "boundary-host-3"
         env       = "dev"
-        workspace = terraform.workspace
+        workspace = random_id.workspace_id.id
     }, {
         Name  = "boundary-host-4"
         env       = "prod"
-        workspace = terraform.workspace
+        workspace = random_id.workspace_id.id
     }, {
         Name  = "boundary-host-5"
         env       = "prod"
-        workspace = terraform.workspace
+        workspace = random_id.workspace_id.id
     }]
 }
 

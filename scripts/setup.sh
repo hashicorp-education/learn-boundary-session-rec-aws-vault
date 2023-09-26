@@ -3,9 +3,10 @@ set -e
 
 function _init {
     username=$(whoami)
+    workspace="boundary-recording-$username"
     terraform init
-    terraform workspace select $username || terraform workspace new $username
-    terraform workspace select $username
+    terraform workspace select $workspace || terraform workspace new $workspace
+    terraform workspace select $workspace
 }
 
 function _validate_private_key {
