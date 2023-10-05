@@ -1,0 +1,25 @@
+AWS_REGION = "us-east"
+
+BOUNDARY_ADDR = "<YOUR_BOUNDARY_ADDR>"
+
+BOUNDARY_USERNAME = "<YOUR_ADMIN_USERNAME>"
+
+BOUNDARY_PASSWORD = "<YOUR_ADMIN_PASSWORD>"
+
+BOUNDARY_AUTH_METHOD_ID = "<YOUR_AUTH_METHOD_ID>"
+
+BOUNDARY_CLUSTER_ID = "<YOUR_CLUSTER_ID>"
+
+HOST_CATALOG_ACCESS_KEY_ID = "<YOUR_HOST_CATALOG_ACCESS_KEY_ID>"
+
+HOST_CATALOG_SECRET_ACCESS_KEY = "<YOUR_HOST_CATALOG_SECRET_ACCESS_KEY>"
+
+VAULT_ADDR = "<YOUR_VAULT_ADDR>"
+
+VAULT_CRED_STORE_TOKEN = "<YOUR_VAULT_CRED_STORE_TOKEN>"
+
+recording_bucket_name = "<YOUR_recording_bucket_name>"
+
+recording_storage_user_access_key_id = "<YOUR_storage_user_access_key_id>"
+
+recording_storage_user_secret_access_key = "<YOUR_storage_user_secret_access_key>"
