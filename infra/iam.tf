@@ -122,7 +122,7 @@ resource "aws_iam_user" "user" {
   count                = var.iam_user_count
   name                 = random_id.aws_iam_user_name[count.index].dec
   force_destroy        = true
-  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser" # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
+  # permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser" # Uncomment if using the dev account. This is a requirement to obtain access in creating a iam user in the dev account.
 }
 
 resource "aws_iam_access_key" "user_initial_key" {
@@ -202,7 +202,7 @@ resource "random_id" "storage_user_name" {
 resource "aws_iam_user" "storage_user" {
   name                 = random_id.storage_user_name.dec
   force_destroy        = true
-  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/BoundaryDemoPermissionsBoundary" # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
+  # permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/BoundaryDemoPermissionsBoundary" # Uncomment if using the dev account. This is a requirement to obtain access in creating a iam user in the dev account.
   tags = {
     "boundary-demo" = local.deployment_name # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
   }
