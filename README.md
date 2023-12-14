@@ -9,9 +9,9 @@ deployed in aws using terraform. An aws instance is created and hosts both a
 vault and boundary worker service. Addional hosts are deployed for use by the
 dynamic host catalog plugin, which also host the boundary worker service.
 
-The lab environment is designed to accompany the Hashicorp tutorial [Enable
+The lab environment is designed to accompany the Hashicorp Boundary tutorial [Enable
 session recording with AWS and
-Vault](https://learn.hashicorp.com/tutorials/boundary/host-management/aws-session-rec-vault).
+Vault](https://developer.hashicorp.com/boundary/tutorials/enterprise/aws-session-rec-vault).
 
 ### Dependencies
 
