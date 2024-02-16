@@ -88,7 +88,7 @@ function destroy {
     if [ "$INSTANCE_COUNT" == "" ]; then
         INSTANCE_COUNT=2
     fi
-    terraform destroy -var="AWS_REGION=${AWS_REGION}" -var="boundary_cluster_id=${BOUNDARY_CLUSTER_ID}" -var="instance_count"=${INSTANCE_COUNT}
+    terraform destroy -auto-approve -var="AWS_REGION=${AWS_REGION}" -var="boundary_cluster_id=${BOUNDARY_CLUSTER_ID}" -var="instance_count"=${INSTANCE_COUNT}
     popd
 }
 
