@@ -19,7 +19,7 @@ storage "raft" {
 }
 
 listener "tcp" {
-  address     = "127.0.0.1:8199"
+  address     = "127.0.0.1:8200"
   tls_disable = "true"
 }
 
@@ -43,12 +43,12 @@ EOF
 sudo mv /home/ec2-user/config.hcl /vault/config/config.hcl
 cat /vault/config/config.hcl
 
-sudo mv /home/ec2-user/vault /etc/init.d/vault
-sudo chmod 755 /etc/init.d/vault
-sudo service vault start
+sudo mv /home/ec2-user/vault /etc/systemd/system/vault.service
+sudo chmod 755 /etc/systemd/system/vault.service
+sudo systemctl start vault
 sleep 5
 
-export VAULT_ADDR="http://127.0.0.1:8199"
+export VAULT_ADDR="http://127.0.0.1:8200"
 export AWS_DEFAULT_REGION="${REGION}"
 vault operator init -format json > /home/ec2-user/credentials
 sudo mv /home/ec2-user/credentials /vault/config/credentials
