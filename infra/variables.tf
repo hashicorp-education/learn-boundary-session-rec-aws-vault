@@ -27,9 +27,10 @@ resource "random_id" "workspace_id" {
 locals {
     deployment_name = split(":", data.aws_caller_identity.current.user_id)[1]
     vault_tags = {
-        Name      = "boundary-vault"
-        env       = "vault-dev"
-        workspace = random_id.workspace_id.id
+        Name          = "boundary-vault"
+        env           = "vault-dev"
+        workspace     = random_id.workspace_id.id
+        boundary-demo = local.deployment_name
     }
     host_catalog_plugin_tags = [{
         Name  = "boundary-host-1"
