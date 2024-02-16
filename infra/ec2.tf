@@ -6,7 +6,7 @@ data "aws_ami" "amazon" {
   owners      = ["amazon"]
   filter {
     name   = "name"
-    values = ["amzn-ami-*-x86_64-gp2"]
+    values = ["al2023-ami-*-x86_64"]
   }
   filter {
     name   = "virtualization-type"
@@ -24,7 +24,6 @@ resource "aws_instance" "vault" {
   iam_instance_profile        = aws_iam_instance_profile.vault.id
 
   root_block_device {
-    volume_size = 8
     volume_type = "gp2"
   }
 
@@ -85,7 +84,6 @@ resource "aws_instance" "target" {
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size = 8
     volume_type = "gp2"
   }
 
