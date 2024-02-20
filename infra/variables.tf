@@ -25,7 +25,7 @@ resource "random_id" "workspace_id" {
 }
 
 locals {
-    deployment_name = split(":", data.aws_caller_identity.current.user_id)[1]
+    deployment_name = try(split(":", data.aws_caller_identity.current.user_id)[1], "boundary-recording-lab")
     vault_tags = {
         Name          = "boundary-vault"
         env           = "vault-dev"
