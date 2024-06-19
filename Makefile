@@ -29,7 +29,7 @@ register_vault_worker:
 
 .PHONY: vault_connect
 vault_connect:
-	bash -c "source ./scripts/setup.sh && connect_vault"
+	bash -c "source ./scripts/setup.sh && vault_connect"
 
 .PHONY: register_target_workers
 register_target_workers:
