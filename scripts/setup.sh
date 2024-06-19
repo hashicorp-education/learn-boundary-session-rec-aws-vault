@@ -123,11 +123,11 @@ function vault_init {
     popd
 
     pushd vault
-    if [ "$VAULT_TOKEN" == ""]; then
+    if [[ "$VAULT_TOKEN" == "" ]]; then
         echo "missing env variable: \"VAULT_TOKEN\". please run make vault_token."
         exit 1
     fi
-    if [ "$VAULT_ADDR" == ""]; then
+    if [[ "$VAULT_ADDR" == "" ]]; then
         echo "missing env variable: \"VAULT_ADDR\". please run make vault_token."
         exit 1
     fi
@@ -166,7 +166,7 @@ function vault_worker_token {
     _validate_boundary_login
     pushd infra
     _validate_private_key
-    if [ "$BOUNDARY_ADDR" == "" ]; then
+    if [[ "$BOUNDARY_ADDR" == "" ]]; then
         echo "missing env variable: \"BOUNDARY_ADDR\""
         exit 1
     fi
