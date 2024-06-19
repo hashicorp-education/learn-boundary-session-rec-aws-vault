@@ -27,6 +27,7 @@ worker {
   public_addr = "${PUBLIC_IP}:9202"
   auth_storage_path = "/boundary-worker/auth"
   recording_storage_path = "/tmp/boundary/worker-recordings"
+  recording_storage_minimum_available_capacity = "100MB"
   tags {
     type = ["worker${WORKER_COUNT}", "${WORKER_ENV}-worker", "s3"]
   }
