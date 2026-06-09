@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+source /home/ec2-user/.bashrc
+
+: "${PRIVATE_IP:?PRIVATE_IP not set}"
+: "${PUBLIC_DNS:?PUBLIC_DNS not set}"
+: "${KMS_KEY_ID:?KMS_KEY_ID not set}"
+: "${REGION:?REGION not set}"
+
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 sudo yum -y install vault
@@ -13,6 +20,8 @@ sudo mkdir /vault/logs
 sudo chmod -R a+rwx /vault
 
 cat > /home/ec2-user/config.hcl <<- EOF
+disable_mlock = true
+
 storage "raft" {
   path    = "/vault/data"
   node_id = "node_0"
@@ -45,8 +54,10 @@ cat /vault/config/config.hcl
 
 sudo mv /home/ec2-user/vault /etc/systemd/system/vault.service
 sudo chmod 755 /etc/systemd/system/vault.service
+sudo systemctl daemon-reload
 sudo systemctl start vault
 sleep 5
+sudo systemctl is-active --quiet vault
 
 export VAULT_ADDR="http://127.0.0.1:8200"
 export AWS_DEFAULT_REGION="${REGION}"

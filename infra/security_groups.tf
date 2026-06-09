@@ -127,3 +127,13 @@ resource "aws_security_group_rule" "security_group_ssh_in" {
   to_port           = 22
   security_group_id = aws_security_group.target_security_group[count.index].id
 }
+
+resource "aws_security_group_rule" "security_group_outgoing_traffic" {
+  count             = var.instance_count
+  type              = "egress"
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 0
+  to_port           = 65535
+  security_group_id = aws_security_group.target_security_group[count.index].id
+}

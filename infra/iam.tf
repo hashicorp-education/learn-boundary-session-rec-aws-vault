@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "host_catalog_plugin" {
   statement {
     effect    = "Allow"
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${terraform.workspace}"]
-    actions   = [
+    actions = [
       "iam:CreateAccessKey",
       "iam:DeleteAccessKey",
       "iam:ListAccessKeys",
@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "host_catalog_plugin" {
   statement {
     effect    = "Deny"
     resources = ["*"]
-    actions   = [
+    actions = [
       "iam:CreateAccessKey",
       "iam:DeleteAccessKey",
       "iam:ListAccessKeys",
@@ -44,8 +44,8 @@ data "aws_iam_policy_document" "assume_role_ec2" {
 
 data "aws_iam_policy_document" "vault" {
   statement {
-    effect = "Allow"
-    actions = ["ec2:DescribeInstances"]
+    effect    = "Allow"
+    actions   = ["ec2:DescribeInstances"]
     resources = ["*"]
   }
 
@@ -90,21 +90,21 @@ resource "aws_iam_role_policy" "vault" {
 }
 
 resource "random_id" "host_user_name" {
-  prefix      = "demo-${local.deployment_name}-boundary-iam-user" # The prefix of the user should match prefix demo-{user_email}* inorder to have demoUser as a iam policy.
+  prefix      = "demo-${local.deployment_name}" # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
   byte_length = 4
 }
 
 resource "aws_iam_user" "host_catalog_plugin" {
   name                 = random_id.host_user_name.dec
   force_destroy        = true
-#  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser" # Uncomment if using the dev account. This is a requirement to obtain access in creating a iam user in the dev account.
-  tags                 = {
+  # permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser" # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
+  tags = {
     "boundary-demo" = local.deployment_name # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
   }
 }
 
 resource "aws_iam_access_key" "host_catalog_plugin" {
-  user  = aws_iam_user.host_catalog_plugin.name
+  user = aws_iam_user.host_catalog_plugin.name
 }
 
 resource "aws_iam_policy" "host_catalog_plugin" {
@@ -127,10 +127,10 @@ resource "random_id" "aws_iam_user_name" {
 }
 
 resource "aws_iam_user" "user" {
-  count                = var.iam_user_count
-  name                 = random_id.aws_iam_user_name[count.index].dec
-#  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser" # Uncomment if using the dev account. This is a requirement to obtain access in creating a iam user in the dev account.
-  force_destroy        = true
+  count = var.iam_user_count
+  name  = random_id.aws_iam_user_name[count.index].dec
+  # permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser" # Updated to use DemoUser, per cloudsec team requirements
+  force_destroy = true
   tags = {
     "boundary-demo" = local.deployment_name # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
   }
@@ -206,14 +206,14 @@ resource "aws_iam_user_policy_attachment" "user_self_manage_policy_attachment" {
 }
 
 resource "random_id" "storage_user_name" {
-  prefix      = "demo-${local.deployment_name}-boundary-iam-user" # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
+  prefix      = "demo-${local.deployment_name}-boundary-iam-user" # The prefix of the user should match prefix demo-{user_email}* inorder to have demoUser as a iam policy.
   byte_length = 4
 }
 
 resource "aws_iam_user" "storage_user" {
-  name                 = random_id.storage_user_name.dec
-  force_destroy        = true
-#  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser" # Uncomment if using the dev account. This is a requirement to obtain access in creating a iam user in the dev account.
+  name          = random_id.storage_user_name.dec
+  force_destroy = true
+  # permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser" # Uncomment if using the dev account. This is a requirement to obtain access in creating a iam user in the dev account.
   tags = {
     "boundary-demo" = local.deployment_name # Do Not Remove/Edit. This is a requirement to obtain access in creating a iam user in the dev account.
   }
@@ -260,7 +260,7 @@ EOF
 
 resource "aws_iam_user_policy_attachment" "storage_user_policy_attachment" {
   user       = aws_iam_user.storage_user.name
-  policy_arn = aws_iam_policy.storage_user_policy.arn
+  policy_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/DemoUser"
 }
 
 resource "aws_iam_access_key" "storage_user_key" {
