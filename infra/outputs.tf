@@ -34,13 +34,13 @@ output "vault_public_key" {
 output "host_catalog_access_key_id" {
   description = "programmatic access key id for dynamic host catalog testing"
   value       = aws_iam_access_key.host_catalog_plugin.id
-  sensitive = true
+  sensitive   = true
 }
 
 output "host_catalog_secret_access_key" {
   description = "programmatic secret access key for dynamic host catalog testing"
   value       = aws_iam_access_key.host_catalog_plugin.secret
-  sensitive = true
+  sensitive   = true
 }
 
 output "target_instance_ids_map" {
@@ -52,22 +52,22 @@ output "target_instance_ids_map" {
 
 output "target_instance_ids" {
   description = "ec2 instance ids for dynamic host catalog testing"
-  value = aws_instance.target.*.id
+  value       = aws_instance.target.*.id
 }
 
 output "target_instance_private_ips" {
   description = "ec2 instance private ips for dynamic host catalog testing"
-  value = aws_instance.target.*.private_ip
+  value       = aws_instance.target.*.private_ip
 }
 
 output "target_instance_public_ips" {
   description = "ec2 instance public ips for dynamic host catalog testing"
-  value = aws_instance.target.*.public_ip
+  value       = aws_instance.target.*.public_ip
 }
 
 output "target_instance_public_dns" {
   description = "ec2 instance public dns for dynamic host catalog testing"
-  value = aws_instance.target.*.public_dns
+  value       = aws_instance.target.*.public_dns
 }
 
 output "target_instance_tags" {

@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+source /home/ec2-user/.bashrc
+
+: "${CLUSTER_ID:?CLUSTER_ID not set}"
+: "${PUBLIC_IP:?PUBLIC_IP not set}"
+
 sudo yum install -y yum-utils shadow-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 sudo yum -y install boundary-enterprise
@@ -40,7 +45,15 @@ cat /boundary-worker/config/config.hcl
 sudo mv /home/ec2-user/boundary-worker /etc/init.d/boundary-worker
 sudo chmod 755 /etc/init.d/boundary-worker
 sudo service boundary-worker start
-sleep 5
+for _ in {1..30}; do
+  if worker_auth=$(grep -m1 "Worker Auth Registration Request:" /boundary-worker/logs/log.out 2>/dev/null); then
+    break
+  fi
+  sleep 2
+done
 
-worker_auth=$(head -n 15 /boundary-worker/logs/log.out | grep "Worker Auth Registration Request:")
+if [[ -z "${worker_auth}" ]]; then
+  exit 1
+fi
+
 echo ${worker_auth:36} > /boundary-worker/config/worker_auth_token

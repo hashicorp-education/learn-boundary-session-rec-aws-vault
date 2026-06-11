@@ -12,6 +12,15 @@ The lab environment is designed to accompany the Hashicorp Boundary tutorial [En
 - [make](https://www.gnu.org/software/make/) or [GnuWin32 make](https://gnuwin32.sourceforge.net/packages/make.htm)
 - [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 
+### Deployment Notes
+
+- Linux EC2 instances use the latest Amazon Linux 2 x86_64 AMI via the AWS public SSM parameter `/aws/service/ami-amazon-linux-latest/amzn2-ami-kernel-default-hvm-x86_64-gp2`.
+- The Vault host uses a 30 GB root volume and `t2.small`.
+- Linux target hosts use 16 GB root volumes and `t3.small`. Smaller instance types such as `t3.nano` can be OOM-killed while starting the Boundary worker.
+- Vault and Boundary now render `disable_mlock = true` in their generated configs. Vault 2.0 releases require `disable_mlock` to be explicitly set.
+- Worker bootstrap waits for the `Worker Auth Registration Request` log line before writing `worker_auth_token` instead of assuming it appears immediately after service start.
+- Terraform `remote-exec` scripts rely on environment variables appended to `/home/ec2-user/.bashrc`, so the provisioning scripts explicitly source that file before rendering config.
+
 ### AWS Access
 
 An AWS account is required with create access for the following services:
@@ -64,6 +73,13 @@ To deploy the lab environment:
 1. Deploy Terraform using `make`:
 
    ```shell
+   make apply
+   ```
+
+   If you change AMI selection, instance sizing, or provisioning scripts after a partial deployment, prefer a clean rebuild:
+
+   ```shell
+   make destroy
    make apply
    ```
 

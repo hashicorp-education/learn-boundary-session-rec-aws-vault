@@ -1,21 +1,12 @@
 # vault + boundary worker
 
 data "aws_region" "current" {}
-data "aws_ami" "amazon" {
-  most_recent = true
-  owners      = ["amazon"]
-  filter {
-    name   = "name"
-    values = ["al2023-ami-*-x86_64"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
+data "aws_ssm_parameter" "amazon_linux" {
+  name = "/aws/service/ami-amazon-linux-latest/amzn2-ami-kernel-default-hvm-x86_64-gp2"
 }
 
 resource "aws_instance" "vault" {
-  ami                         = data.aws_ami.amazon.id
+  ami                         = data.aws_ssm_parameter.amazon_linux.value
   instance_type               = "t2.small"
   associate_public_ip_address = true
   key_name                    = aws_key_pair.boundary-key.key_name
@@ -24,6 +15,7 @@ resource "aws_instance" "vault" {
   iam_instance_profile        = aws_iam_instance_profile.vault.id
 
   root_block_device {
+    volume_size = 30
     volume_type = "gp2"
   }
 
@@ -50,7 +42,7 @@ resource "aws_instance" "vault" {
       "echo \"export PUBLIC_IP=${aws_instance.vault.public_ip}\" >> ~/.bashrc",
       "echo \"export PUBLIC_DNS=${aws_instance.vault.public_dns}\" >> ~/.bashrc",
       "echo \"export KMS_KEY_ID=${aws_kms_key.vault.key_id}\" >> ~/.bashrc",
-      "echo \"export REGION=${data.aws_region.current.name}\" >> ~/.bashrc",
+      "echo \"export REGION=${data.aws_region.current.region}\" >> ~/.bashrc",
       "echo \"export CLUSTER_ID=${var.boundary_cluster_id}\" >> ~/.bashrc"
     ]
   }
@@ -68,7 +60,7 @@ resource "aws_instance" "vault" {
 resource "random_integer" "tag" {
   count = var.instance_count
   min   = 0
-  max   = length(local.host_catalog_plugin_tags)-1
+  max   = length(local.host_catalog_plugin_tags) - 1
   keepers = {
     always_recreate = uuid()
   }
@@ -76,14 +68,15 @@ resource "random_integer" "tag" {
 
 resource "aws_instance" "target" {
   count                       = var.instance_count
-  ami                         = data.aws_ami.amazon.id
-  instance_type               = "t3.nano"
+  ami                         = data.aws_ssm_parameter.amazon_linux.value
+  instance_type               = "t3.small"
   subnet_id                   = aws_subnet.target_subnet[count.index].id
   key_name                    = aws_key_pair.boundary-key.key_name
   vpc_security_group_ids      = [aws_security_group.host_catalog_plugin[count.index].id]
   associate_public_ip_address = true
 
   root_block_device {
+    volume_size = 16
     volume_type = "gp2"
   }
 
@@ -104,7 +97,7 @@ resource "aws_instance" "target" {
       "echo \"export PRIVATE_IP=${self.private_ip}\" >> ~/.bashrc",
       "echo \"export PUBLIC_IP=${self.public_ip}\" >> ~/.bashrc",
       "echo \"export PUBLIC_DNS=${self.public_dns}\" >> ~/.bashrc",
-      "echo \"export REGION=${data.aws_region.current.name}\" >> ~/.bashrc",
+      "echo \"export REGION=${data.aws_region.current.region}\" >> ~/.bashrc",
       "echo \"export CLUSTER_ID=${var.boundary_cluster_id}\" >> ~/.bashrc",
       "echo \"export WORKER_COUNT=${count.index + 1}\" >> ~/.bashrc",
       "echo \"export WORKER_ENV=${local.host_catalog_plugin_tags[count.index].env}\" >> ~/.bashrc"
